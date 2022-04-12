@@ -21,7 +21,6 @@ namespace RiverRegistry.Controllers
     [ApiController]
     public class ShipController : ControllerBase
     {
-
         private readonly IShipRepository _repository;
 
         public ShipController(IShipRepository repository)
@@ -32,18 +31,19 @@ namespace RiverRegistry.Controllers
         [HttpGet]
         public IActionResult Get([FromQuery] GridifyQuery query)
         {
+            try
+            {
+                var ships = _repository.GetShips(query);
 
-            if(!query.IsValid<Ship>())
+                if (ships.Count == 0)
+                    return NotFound();
+
+                return Ok(ships);
+            }
+            catch(Exception ex)
+            {
                 return BadRequest("Bad filtering query");
-
-            var expression = query.GetFilteringExpression<Ship>();
-
-            var ships = _repository.GetShips(expression);
-
-            if (ships.Count() == 0)
-                return NotFound();
-
-            return Ok(ships);
+            }
         }
 
         [HttpPut]

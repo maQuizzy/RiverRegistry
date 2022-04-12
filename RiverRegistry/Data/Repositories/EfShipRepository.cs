@@ -4,12 +4,10 @@ using System.Threading.Tasks;
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
-using EntityFrameworkCore.CommonTools;
-using Z.EntityFramework.Extensions;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System.Transactions;
-using System.Linq.Expressions;
-using System;
+using Gridify;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 
 namespace RiverRegistry.Data.Repositories
 {
@@ -125,13 +123,14 @@ namespace RiverRegistry.Data.Repositories
             await _ctx.SaveChangesAsync();
         }
 
-        public IEnumerable<Ship> GetShips(Expression<Func<Ship, bool>> linqExpression)
+        public Paging<Ship> GetShips(GridifyQuery query)
         {
             return _ctx.Ships
+                .Include(s => s.ShipCapacity)
                 .Include(s => s.ShipDimensions)
                 .Include(s => s.ShipEngines)
-                .Include(s => s.ShipCapacity)
-                .Where(linqExpression);
+                .Gridify(query);
+                
         }
 
         public IEnumerable<Ship> GetAllShips()

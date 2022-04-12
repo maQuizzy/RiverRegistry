@@ -48,6 +48,17 @@ namespace RiverRegistry
 
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<UsersDbContext>();
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll", policy =>
+                {
+                    policy.AllowAnyHeader();
+                    policy.AllowAnyMethod();
+                    policy.WithOrigins("http://localhost:3000");
+                    policy.AllowCredentials();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +72,8 @@ namespace RiverRegistry
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("AllowAll");
 
             app.UseRouting();
 
