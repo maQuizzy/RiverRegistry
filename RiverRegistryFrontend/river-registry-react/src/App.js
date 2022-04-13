@@ -47,7 +47,7 @@ function App() {
             </Menu.Item>
           </Menu>
         </Sider>
-        <Content>
+        <Content style={{ overflowY: 'scroll' }}>
           <Routes>
             <Route path='/' element={<HomePage />} />
             <Route path='/ships' element={<ShipsPage />} />

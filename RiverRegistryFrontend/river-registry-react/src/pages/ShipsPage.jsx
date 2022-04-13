@@ -57,6 +57,10 @@ function ShipsPage() {
   ];
 
   const getShips = (query, pagination) => {
+    setState({
+      ...state,
+      loading: true
+    })
     ShipsService.Get(query, (data) => updateShips(data, pagination))
   }
 
@@ -64,6 +68,8 @@ function ShipsPage() {
 
     let pagedQuery = query ? query + `&pageSize=${pagination.pageSize}&page=${pagination.current}` :
     `?pageSize=${pagination.pageSize}&page=${pagination.current}`;
+
+    console.log(sorter.order)
 
     if(sorter.field)
     {
@@ -83,6 +89,7 @@ function ShipsPage() {
   }
 
   const updateShips = (data, pagination) => {
+    setShips(data.data);
     setState({
       ...state,
       loading: false,
@@ -93,11 +100,10 @@ function ShipsPage() {
       }
       
     })
-    setShips(data.data);
   }
 
   useEffect(() => {
-    ShipsService.Get("", (data) => updateShips(data, state.pagination))
+    ShipsService.Get(`?PageSize=${state.pagination.pageSize}`, (data) => updateShips(data, state.pagination))
   }, []);
 
   const { data, pagination, loading } = state;
@@ -105,14 +111,16 @@ function ShipsPage() {
   return (
     <div style={{
       width: '100%',
-      height: '100%'
+      height: '100%',
+      minHeight: 600
     }}>
       <h1 style={{
         paddingTop: 10
       }}>Суда</h1>
       <div style={{
         display: 'flex',
-        paddingTop: 10
+        paddingTop: 10,
+        height: screenSize.dynamicHeight - 54
       }}>
         <div
           style={{
